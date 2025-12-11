@@ -27,7 +27,6 @@ const EditProfile = ({ refreshData }) => {
     pincode: '', address: '', about: ''
   });
 
-
   const [errors, setErrors] = useState({});
 
   const [selectedCountry, setSelectedCountry] = useState(null);
@@ -82,58 +81,84 @@ const EditProfile = ({ refreshData }) => {
     fetchData();
   }, [countryOptions]);
 
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+ 
     setFormData(prev => ({ ...prev, [name]: value }));
     
- 
-    if (errors[name]) {
-      setErrors(prev => ({ ...prev, [name]: false }));
+    let errorMsg = null;
+
+  
+    if (name === 'pincode') {
+      if (/[^0-9]/.test(value)) {
+        errorMsg = "Only numbers are allowed";
+      } else if (value.length !== 6 && value.length > 0) {
+       
+      }
     }
+
+  
+    if (name === 'cin') {
+      if (/[^a-zA-Z0-9]/.test(value)) {
+        errorMsg = "Only alphanumeric characters allowed (A-Z, 0-9)";
+      }
+    }
+
+  
+    if (name === 'website') {
+      const urlPattern = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
+      if (value && !urlPattern.test(value)) {
+        errorMsg = "URL is not valid (e.g., https://example.com)";
+      }
+    }
+
+
+    if (!value.trim() && name !== 'website' && name !== 'cin' && name !== 'pincode') { 
+       
+        if (errors[name]) errorMsg = null; 
+    }
+
+    // Set Error State
+    setErrors(prev => ({ ...prev, [name]: errorMsg }));
   };
 
   const handleCountryChange = (val) => {
     setSelectedCountry(val);
-    if (errors.country) setErrors(prev => ({ ...prev, country: false }));
+    if (errors.country) setErrors(prev => ({ ...prev, country: null }));
   };
 
   const handleSectorChange = (val) => {
     setSelectedSectors(val);
-    if (errors.sectors) setErrors(prev => ({ ...prev, sectors: false }));
+    if (errors.sectors) setErrors(prev => ({ ...prev, sectors: null }));
   };
 
-
+  
   const handleSave = async (e) => {
     e.preventDefault(); 
-    const newErrors = {}; 
-
-
-    if (!formData.companyName.trim()) newErrors.companyName = true;
-    if (!formData.brandName.trim()) newErrors.brandName = true;
-    if (!formData.website.trim()) newErrors.website = true;
-    if (!formData.address.trim()) newErrors.address = true;
-    if (!formData.about.trim()) newErrors.about = true;
-
-
-    if (!selectedCountry) newErrors.country = true;
-    if (selectedSectors.length === 0) newErrors.sectors = true;
-
     
-    const pincodeRegex = /^\d{6}$/;
-    if (!formData.pincode.trim() || !pincodeRegex.test(formData.pincode)) {
-      newErrors.pincode = true;
-    }
-
- 
-    const cinRegex = /^[a-zA-Z0-9]{6}$/;
-    if (!formData.cin.trim() || !cinRegex.test(formData.cin)) {
-      newErrors.cin = true;
-    }
+  
+    const newErrors = {};
 
 
-    setErrors(newErrors);
-    if (Object.keys(newErrors).length > 0) {
-      alert("Please fix the highlighted errors.");
+    if (!formData.companyName.trim()) newErrors.companyName = "Required";
+    if (!formData.brandName.trim()) newErrors.brandName = "Required";
+    if (!formData.address.trim()) newErrors.address = "Required";
+    if (!formData.about.trim()) newErrors.about = "Required";
+    if (!formData.pincode.trim()) newErrors.pincode = "Required";
+    if (!formData.website.trim()) newErrors.website = "Required";
+    if (!formData.cin.trim()) newErrors.cin = "Required";
+
+    if (!selectedCountry) newErrors.country = "Required";
+    if (selectedSectors.length === 0) newErrors.sectors = "Required";
+
+    const finalErrors = { ...errors, ...newErrors };
+    
+
+    const hasErrors = Object.values(finalErrors).some(val => val !== null);
+
+    if (hasErrors) {
+      setErrors(finalErrors);
       return; 
     }
 
@@ -159,11 +184,9 @@ const EditProfile = ({ refreshData }) => {
 
     } catch (error) {
       console.error("Error saving:", error);
-      alert("Error saving profile");
       setIsSaving(false);
     }
   };
-
 
   const getDropdownStyles = (hasError) => ({
     control: (base) => ({
@@ -199,8 +222,22 @@ const EditProfile = ({ refreshData }) => {
             
             <FormSection title="Basic Information">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <InputGroup label="Company Name" name="companyName" value={formData.companyName} onChange={handleInputChange} error={errors.companyName} required />
-                <InputGroup label="Brand Name" name="brandName" value={formData.brandName} onChange={handleInputChange} error={errors.brandName} required />
+                <InputGroup 
+                  label="Company Name" 
+                  name="companyName" 
+                  value={formData.companyName} 
+                  onChange={handleInputChange} 
+                  errorMessage={errors.companyName} 
+                  required 
+                />
+                <InputGroup 
+                  label="Brand Name" 
+                  name="brandName" 
+                  value={formData.brandName} 
+                  onChange={handleInputChange} 
+                  errorMessage={errors.brandName} 
+                  required 
+                />
                 
                 {/* Country Dropdown */}
                 <div className="flex flex-col gap-1.5">
@@ -210,14 +247,29 @@ const EditProfile = ({ refreshData }) => {
                     value={selectedCountry}
                     onChange={handleCountryChange}
                     placeholder="Select Country..."
-                    styles={getDropdownStyles(errors.country)} // Pass error state here
+                    styles={getDropdownStyles(errors.country)} 
                     isClearable
                   />
+                  {errors.country && <span className="text-[10px] text-red-500">Required</span>}
                 </div>
 
-                <InputGroup label="CIN" name="cin" value={formData.cin} onChange={handleInputChange} error={errors.cin} required />
+                <InputGroup 
+                  label="CIN" 
+                  name="cin" 
+                  value={formData.cin} 
+                  onChange={handleInputChange} 
+                  errorMessage={errors.cin} 
+                  required 
+                />
                 <div className="md:col-span-2">
-                  <InputGroup label="Website" name="website" value={formData.website} onChange={handleInputChange} error={errors.website} required />
+                  <InputGroup 
+                    label="Website" 
+                    name="website" 
+                    value={formData.website} 
+                    onChange={handleInputChange} 
+                    errorMessage={errors.website} 
+                    required 
+                  />
                 </div>
               </div>
             </FormSection>
@@ -229,20 +281,35 @@ const EditProfile = ({ refreshData }) => {
                   name="pincode" 
                   value={formData.pincode} 
                   onChange={handleInputChange} 
-                  error={errors.pincode}
+                  errorMessage={errors.pincode}
                   required 
-                  maxLength={6}
-                  placeholder="123456"
+                  maxLength={6} // Still useful to limit typing
                 />
-                <InputGroup label="Address" name="address" value={formData.address} onChange={handleInputChange} error={errors.address} isTextArea required />
+                <InputGroup 
+                  label="Address" 
+                  name="address" 
+                  value={formData.address} 
+                  onChange={handleInputChange} 
+                  errorMessage={errors.address} 
+                  isTextArea 
+                  required 
+                />
               </div>
             </FormSection>
 
             <FormSection title="About Company">
-               <InputGroup label="About" name="about" value={formData.about} onChange={handleInputChange} error={errors.about} isTextArea rows={4} required />
+               <InputGroup 
+                 label="About" 
+                 name="about" 
+                 value={formData.about} 
+                 onChange={handleInputChange} 
+                 errorMessage={errors.about} 
+                 isTextArea rows={4} 
+                 required 
+               />
             </FormSection>
 
-            <FormSection title="Business Sectors" subtitle="Select the industries your company operates in">
+            <FormSection title="Business Sectors">
                <div className="flex flex-col gap-1.5">
                   <label className="text-xs font-semibold text-gray-700">Sectors <span className="text-red-500">*</span></label>
                   <Select 
@@ -251,9 +318,10 @@ const EditProfile = ({ refreshData }) => {
                     value={selectedSectors}
                     onChange={handleSectorChange}
                     placeholder="Select sectors..."
-                    styles={getDropdownStyles(errors.sectors)} // Pass error state here
+                    styles={getDropdownStyles(errors.sectors)} 
                     closeMenuOnSelect={false}
                   />
+                  {errors.sectors && <span className="text-[10px] text-red-500">Required</span>}
                </div>
             </FormSection>
 
@@ -283,7 +351,7 @@ const EditProfile = ({ refreshData }) => {
 };
 
 
-const InputGroup = ({ label, name, value, onChange, placeholder, isTextArea, rows, required, error, ...rest }) => (
+const InputGroup = ({ label, name, value, onChange, placeholder, isTextArea, rows, required, errorMessage, ...rest }) => (
   <div className="flex flex-col gap-1.5">
     <label className="text-xs font-semibold text-gray-700">
       {label} {required && <span className="text-red-500">*</span>}
@@ -291,9 +359,8 @@ const InputGroup = ({ label, name, value, onChange, placeholder, isTextArea, row
     {isTextArea ? (
       <textarea 
         name={name} value={value} onChange={onChange} 
-      
         className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-1 
-          ${error ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-indigo-500'} 
+          ${errorMessage ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-indigo-500'} 
           placeholder-gray-400`}
         placeholder={placeholder} rows={rows || 3} 
         {...rest}
@@ -301,16 +368,16 @@ const InputGroup = ({ label, name, value, onChange, placeholder, isTextArea, row
     ) : (
       <input 
         type="text" name={name} value={value} onChange={onChange} 
-   
         className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-1 
-          ${error ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-indigo-500'} 
+          ${errorMessage ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-indigo-500'} 
           placeholder-gray-400`}
         placeholder={placeholder} 
         {...rest}
       />
     )}
-   
-    {error && <span className="text-[10px] text-red-500">Invalid input</span>}
+    
+
+    {errorMessage && <span className="text-[10px] text-red-500">{errorMessage}</span>}
   </div>
 );
 
