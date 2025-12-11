@@ -1,8 +1,8 @@
-// src/components/Sidebar.jsx
+
 import React, { useState } from 'react';
 import portfolioLogo from '../assets/portfolio_logo.png';
 
-//react icons
+
 import { 
   LuLayoutGrid, 
   LuClipboardList, 
@@ -22,7 +22,6 @@ const Sidebar = ({ mobileMenuOpen, setMobileMenuOpen }) => {
   const [activeTab, setActiveTab] = useState('Stakeholders');
   const [isCollapsed, setIsCollapsed] = useState(false);
 
-  
   const menuItems = [
     { name: 'Dashboard', icon: LuLayoutGrid },
     { name: 'Screening', icon: LuClipboardList },
@@ -45,23 +44,26 @@ const Sidebar = ({ mobileMenuOpen, setMobileMenuOpen }) => {
       `}
     >
       
-      {/* Header */}
+ 
       <div className={`p-6 flex items-center ${isCollapsed ? 'md:justify-center' : 'justify-between'}`}>
         <div className="flex items-center gap-2 text-indigo-700 font-bold text-lg overflow-hidden whitespace-nowrap">
-          <div className="w-8 h-8 bg-indigo-100 rounded-lg flex-shrink-0 flex items-center justify-center p-1.5">
+          
+         
+          <div className={`w-8 h-8 bg-indigo-100 rounded-lg flex-shrink-0 items-center justify-center p-1.5 ${isCollapsed ? 'hidden' : 'flex'}`}>
             <img src={portfolioLogo} alt="Logo" className="w-full h-full object-contain" />
           </div>
+          
           <span className={`transition-opacity duration-200 ${isCollapsed ? 'md:hidden' : 'block'}`}>
             Portfoliomate
           </span>
         </div>
 
-        {/* Mobile Close Button */}
+
         <button onClick={() => setMobileMenuOpen(false)} className="md:hidden text-gray-500 p-1 hover:text-indigo-600 transition-colors">
           <LuX className="w-6 h-6" />
         </button>
 
-        {/* Desktop Collapse Button */}
+  
         <button 
           onClick={() => setIsCollapsed(!isCollapsed)} 
           className="hidden md:block text-gray-400 hover:text-indigo-600 transition-colors"
@@ -71,6 +73,7 @@ const Sidebar = ({ mobileMenuOpen, setMobileMenuOpen }) => {
            />
         </button>
       </div>
+
 
       <nav className="flex-1 px-4 space-y-1 overflow-y-auto overflow-x-hidden scrollbar-hide">
         {menuItems.map((item) => {
@@ -91,7 +94,6 @@ const Sidebar = ({ mobileMenuOpen, setMobileMenuOpen }) => {
               } ${isCollapsed ? 'md:justify-center' : ''}`}
               title={isCollapsed ? item.name : ''}
             >
-           
               <IconComponent 
                 className={`w-5 h-5 flex-shrink-0 ${isActive ? 'text-white' : 'text-gray-400 group-hover:text-gray-500'}`} 
               />
@@ -104,7 +106,7 @@ const Sidebar = ({ mobileMenuOpen, setMobileMenuOpen }) => {
         })}
       </nav>
 
-    
+      {/* Logout Section */}
       <div className="p-4 border-t border-gray-100">
          <button className={`flex items-center gap-3 w-full px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 rounded-lg transition-colors ${isCollapsed ? 'md:justify-center' : ''}`}>
            <LuLogOut className="w-5 h-5 text-gray-400 flex-shrink-0" />

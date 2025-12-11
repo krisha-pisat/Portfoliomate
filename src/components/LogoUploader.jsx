@@ -1,12 +1,12 @@
-// src/components/LogoUploader.jsx
+
 import React from 'react';
 import defaultLogo from '../assets/logo.png'; 
 
-// Now accepts a string 'logoUrl' and a setter function
+
 const LogoUploader = ({ logoUrl, onUrlChange }) => {
 
   const handleImageError = (e) => {
-    e.target.src = defaultLogo; // Fallback if link is broken
+    e.target.src = defaultLogo;
   };
 
   return (
@@ -15,7 +15,7 @@ const LogoUploader = ({ logoUrl, onUrlChange }) => {
       <p className="text-xs text-gray-500 mb-4">Enter a valid image URL</p>
       
       <div className="flex flex-col items-center gap-4">
-        {/* 1. Preview Box */}
+
         <div className="w-32 h-32 border-2 border-dashed border-gray-300 rounded-xl flex items-center justify-center p-2 bg-gray-50">
           <img 
             src={logoUrl || defaultLogo} 
@@ -25,7 +25,7 @@ const LogoUploader = ({ logoUrl, onUrlChange }) => {
           />
         </div>
         
-        {/* 2. URL Input Field (Replaces the File Button) */}
+    
         <div className="w-full">
           <label className="text-[10px] font-semibold text-gray-500 mb-1 block uppercase">
             Image Link

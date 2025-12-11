@@ -27,6 +27,9 @@ const EditProfile = ({ refreshData }) => {
     pincode: '', address: '', about: ''
   });
 
+
+  const [errors, setErrors] = useState({});
+
   const [selectedCountry, setSelectedCountry] = useState(null);
   const [selectedSectors, setSelectedSectors] = useState([]);
   const [logoUrlInput, setLogoUrlInput] = useState(''); 
@@ -82,43 +85,56 @@ const EditProfile = ({ refreshData }) => {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+    
+ 
+    if (errors[name]) {
+      setErrors(prev => ({ ...prev, [name]: false }));
+    }
+  };
+
+  const handleCountryChange = (val) => {
+    setSelectedCountry(val);
+    if (errors.country) setErrors(prev => ({ ...prev, country: false }));
+  };
+
+  const handleSectorChange = (val) => {
+    setSelectedSectors(val);
+    if (errors.sectors) setErrors(prev => ({ ...prev, sectors: false }));
   };
 
 
   const handleSave = async (e) => {
     e.preventDefault(); 
+    const newErrors = {}; 
 
-    if (
-      !formData.companyName.trim() || 
-      !formData.brandName.trim() || 
-      !selectedCountry || 
-      !formData.cin.trim() || 
-      !formData.website.trim() || 
-      !formData.pincode.trim() || 
-      !formData.address.trim() || 
-      !formData.about.trim()
-    ) {
-      alert("Please fill in all required fields marked with *");
-      return; 
-    }
 
+    if (!formData.companyName.trim()) newErrors.companyName = true;
+    if (!formData.brandName.trim()) newErrors.brandName = true;
+    if (!formData.website.trim()) newErrors.website = true;
+    if (!formData.address.trim()) newErrors.address = true;
+    if (!formData.about.trim()) newErrors.about = true;
+
+
+    if (!selectedCountry) newErrors.country = true;
+    if (selectedSectors.length === 0) newErrors.sectors = true;
+
+    
     const pincodeRegex = /^\d{6}$/;
-    if (!pincodeRegex.test(formData.pincode)) {
-      alert("Invalid Pincode: Must be exactly 6 numbers.");
-      return; 
+    if (!formData.pincode.trim() || !pincodeRegex.test(formData.pincode)) {
+      newErrors.pincode = true;
     }
 
-   
+ 
     const cinRegex = /^[a-zA-Z0-9]{6}$/;
-    if (!cinRegex.test(formData.cin)) {
-      alert("Invalid CIN: Must be exactly 6 alphanumeric characters.");
-      return;
+    if (!formData.cin.trim() || !cinRegex.test(formData.cin)) {
+      newErrors.cin = true;
     }
 
-  
-    if (selectedSectors.length === 0) {
-      alert("Please select at least one Business Sector.");
-      return;
+
+    setErrors(newErrors);
+    if (Object.keys(newErrors).length > 0) {
+      alert("Please fix the highlighted errors.");
+      return; 
     }
 
     setIsSaving(true);
@@ -149,20 +165,20 @@ const EditProfile = ({ refreshData }) => {
   };
 
 
-  const customStyles = {
+  const getDropdownStyles = (hasError) => ({
     control: (base) => ({
       ...base,
-      borderColor: '#d1d5db', 
+      borderColor: hasError ? '#ef4444' : '#d1d5db', 
       borderRadius: '0.5rem', 
       paddingTop: '2px',
       paddingBottom: '2px',
       fontSize: '0.875rem',
       boxShadow: 'none',
-      '&:hover': { borderColor: '#9ca3af' }, 
+      '&:hover': { borderColor: hasError ? '#ef4444' : '#9ca3af' }, 
     }),
     input: (base) => ({ ...base, 'input:focus': { boxShadow: 'none' } }),
     menu: (base) => ({ ...base, zIndex: 50 })
-  };
+  });
 
   if (isLoading) return <div className="p-10 text-center">Loading...</div>;
 
@@ -183,25 +199,25 @@ const EditProfile = ({ refreshData }) => {
             
             <FormSection title="Basic Information">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <InputGroup label="Company Name" name="companyName" value={formData.companyName} onChange={handleInputChange} required />
-                <InputGroup label="Brand Name" name="brandName" value={formData.brandName} onChange={handleInputChange} required />
+                <InputGroup label="Company Name" name="companyName" value={formData.companyName} onChange={handleInputChange} error={errors.companyName} required />
+                <InputGroup label="Brand Name" name="brandName" value={formData.brandName} onChange={handleInputChange} error={errors.brandName} required />
                 
-             
+                {/* Country Dropdown */}
                 <div className="flex flex-col gap-1.5">
                   <label className="text-xs font-semibold text-gray-700">Country <span className="text-red-500">*</span></label>
                   <Select 
                     options={countryOptions} 
                     value={selectedCountry}
-                    onChange={setSelectedCountry}
+                    onChange={handleCountryChange}
                     placeholder="Select Country..."
-                    styles={customStyles}
+                    styles={getDropdownStyles(errors.country)} // Pass error state here
                     isClearable
                   />
                 </div>
 
-                <InputGroup label="CIN" name="cin" value={formData.cin} onChange={handleInputChange} required />
+                <InputGroup label="CIN" name="cin" value={formData.cin} onChange={handleInputChange} error={errors.cin} required />
                 <div className="md:col-span-2">
-                  <InputGroup label="Website" name="website" value={formData.website} onChange={handleInputChange} required />
+                  <InputGroup label="Website" name="website" value={formData.website} onChange={handleInputChange} error={errors.website} required />
                 </div>
               </div>
             </FormSection>
@@ -213,17 +229,17 @@ const EditProfile = ({ refreshData }) => {
                   name="pincode" 
                   value={formData.pincode} 
                   onChange={handleInputChange} 
+                  error={errors.pincode}
                   required 
-                  // Optional: Add HTML attributes to help user
                   maxLength={6}
                   placeholder="123456"
                 />
-                <InputGroup label="Address" name="address" value={formData.address} onChange={handleInputChange} isTextArea required />
+                <InputGroup label="Address" name="address" value={formData.address} onChange={handleInputChange} error={errors.address} isTextArea required />
               </div>
             </FormSection>
 
             <FormSection title="About Company">
-               <InputGroup label="About" name="about" value={formData.about} onChange={handleInputChange} isTextArea rows={4} required />
+               <InputGroup label="About" name="about" value={formData.about} onChange={handleInputChange} error={errors.about} isTextArea rows={4} required />
             </FormSection>
 
             <FormSection title="Business Sectors" subtitle="Select the industries your company operates in">
@@ -233,9 +249,9 @@ const EditProfile = ({ refreshData }) => {
                     isMulti 
                     options={SECTOR_OPTIONS} 
                     value={selectedSectors}
-                    onChange={setSelectedSectors}
+                    onChange={handleSectorChange}
                     placeholder="Select sectors..."
-                    styles={customStyles}
+                    styles={getDropdownStyles(errors.sectors)} // Pass error state here
                     closeMenuOnSelect={false}
                   />
                </div>
@@ -266,27 +282,35 @@ const EditProfile = ({ refreshData }) => {
   );
 };
 
-// Modified InputGroup to accept extra props (like maxLength)
-const InputGroup = ({ label, name, value, onChange, placeholder, isTextArea, rows, required, ...rest }) => (
+
+const InputGroup = ({ label, name, value, onChange, placeholder, isTextArea, rows, required, error, ...rest }) => (
   <div className="flex flex-col gap-1.5">
     <label className="text-xs font-semibold text-gray-700">
       {label} {required && <span className="text-red-500">*</span>}
     </label>
     {isTextArea ? (
       <textarea 
-        name={name} value={value} onChange={onChange} required={required}
-        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 placeholder-gray-400" 
+        name={name} value={value} onChange={onChange} 
+      
+        className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-1 
+          ${error ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-indigo-500'} 
+          placeholder-gray-400`}
         placeholder={placeholder} rows={rows || 3} 
         {...rest}
       />
     ) : (
       <input 
-        type="text" name={name} value={value} onChange={onChange} required={required}
-        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 placeholder-gray-400 h-10" 
+        type="text" name={name} value={value} onChange={onChange} 
+   
+        className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-1 
+          ${error ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-indigo-500'} 
+          placeholder-gray-400`}
         placeholder={placeholder} 
         {...rest}
       />
     )}
+   
+    {error && <span className="text-[10px] text-red-500">Invalid input</span>}
   </div>
 );
 
