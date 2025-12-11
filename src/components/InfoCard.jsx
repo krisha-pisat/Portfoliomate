@@ -1,11 +1,10 @@
-// src/components/InfoCard.jsx
+
 import React from 'react';
 
 const InfoCard = ({ icon, label, value, isLink, isTag, isSocial }) => {
   return (
     <div className="bg-white border border-gray-200 rounded-xl p-4 flex flex-col justify-between h-full hover:shadow-sm transition-shadow">
-      {/* Label Row */}
-      {/* CHANGED: 'text-gray-400' -> 'text-indigo-700' for purple icons */}
+      
       <div className="flex items-center gap-2 mb-3 text-indigo-700">
         
         {/* Icon Wrapper */}
@@ -13,7 +12,7 @@ const InfoCard = ({ icon, label, value, isLink, isTag, isSocial }) => {
           {icon}
         </span>
         
-        {/* CHANGED: Removed 'uppercase' and changed text color to gray-500 */}
+        
         <span className="text-xs font-semibold text-gray-500 tracking-wide">
           {label}
         </span>
@@ -36,7 +35,7 @@ const InfoCard = ({ icon, label, value, isLink, isTag, isSocial }) => {
              </svg>
            </div>
         ) : (
-          value || "--" // Fallback if value is missing
+          value || "--" 
         )}
       </div>
     </div>

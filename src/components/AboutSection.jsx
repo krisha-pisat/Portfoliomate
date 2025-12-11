@@ -1,4 +1,4 @@
-// src/components/AboutSection.jsx
+
 import React from 'react';
 
 const AboutSection = ({ description }) => {
@@ -9,7 +9,7 @@ const AboutSection = ({ description }) => {
       </h3>
       
       <div className="space-y-2.5 text-sm text-gray-500 leading-normal whitespace-pre-line">
-        {/* Shows the fetched text or a loading/default message */}
+       
         {description || "Loading description..."}
       </div>
     </div>

@@ -1,4 +1,4 @@
-// src/components/FormSection.jsx
+
 import React from 'react';
 
 const FormSection = ({ title, subtitle, children }) => {

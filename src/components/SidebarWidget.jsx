@@ -1,11 +1,11 @@
-// src/components/SidebarWidget.jsx
+
 import React from 'react';
 
 const SidebarWidget = ({ title, members = [], emptyMessage = "No members added" }) => {
   return (
     <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
       
-      {/* --- Header Section --- */}
+   
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-base font-bold text-gray-900">{title}</h3>
         <button className="text-indigo-600 text-xs font-medium hover:underline flex items-center gap-1">
@@ -16,8 +16,6 @@ const SidebarWidget = ({ title, members = [], emptyMessage = "No members added" 
         </button>
       </div>
 
-      {/* --- Content Section --- */}
-      {/* space-y-3 will create space between the new bordered boxes */}
       {members.length > 0 ? (
         <div className="space-y-3">
           {members.map((member, index) => (
@@ -31,21 +29,17 @@ const SidebarWidget = ({ title, members = [], emptyMessage = "No members added" 
   );
 };
 
-// ===========================
-// --- UPDATED SUB-COMPONENT ---
-// ===========================
 const MemberRow = ({ name, role, imageUrl, linkedinUrl }) => {
   return (
-    // CHANGED: Added border, increased padding, removed negative margin
+    
     <div className="flex items-center justify-between p-3 rounded-lg border border-gray-100 bg-white hover:border-gray-300 transition-all">
       <div className="flex items-center gap-3">
-        {/* Avatar */}
         <img 
           src={imageUrl} 
           alt={name} 
           className="w-10 h-10 rounded-full object-cover border border-gray-200"
         />
-        {/* Text Info */}
+     
         <div className="flex flex-col">
           <span className="text-sm font-semibold text-gray-900 leading-tight">
             {name}
@@ -56,7 +50,6 @@ const MemberRow = ({ name, role, imageUrl, linkedinUrl }) => {
         </div>
       </div>
 
-      {/* LinkedIn Icon */}
       {linkedinUrl && (
         <a href={linkedinUrl} target="_blank" rel="noreferrer" className="text-[#0077b5] hover:opacity-80">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
@@ -68,7 +61,7 @@ const MemberRow = ({ name, role, imageUrl, linkedinUrl }) => {
   );
 };
 
-// --- Sub-Component: Empty State (No changes here) ---
+
 const EmptyState = ({ message }) => {
   return (
     <div className="flex flex-col items-center justify-center py-6 text-center">

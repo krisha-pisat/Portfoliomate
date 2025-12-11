@@ -17,3 +17,4 @@ const app = initializeApp(firebaseConfig);
 // 2. Export only DB and Storage (Removed Functions)
 export const db = getFirestore(app);
 export const storage = getStorage(app);
+export const COMPANY_ID = "SSlXMaTlgeFvuezuV4Sl";

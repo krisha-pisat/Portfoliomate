@@ -1,4 +1,4 @@
-// src/components/CompanyDetails.jsx
+
 import React from 'react';
 import InfoCard from './InfoCard';
 
@@ -57,7 +57,7 @@ const CompanyDetails = ({ data }) => {
   ];
 
   return (
-    // <--- THIS DIV IS THE KEY. It creates the 3-column grid.
+
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {fields.map((field) => (
         <InfoCard

@@ -2,33 +2,45 @@
 import React, { useState } from 'react';
 import portfolioLogo from '../assets/portfolio_logo.png';
 
+//react icons
+import { 
+  LuLayoutGrid, 
+  LuClipboardList, 
+  LuUsers, 
+  LuHandshake, 
+  LuListTodo, 
+  LuBell, 
+  LuMessageSquare, 
+  LuLink, 
+  LuSettings, 
+  LuLogOut,
+  LuChevronLeft,
+  LuX
+} from "react-icons/lu";
+
 const Sidebar = ({ mobileMenuOpen, setMobileMenuOpen }) => {
   const [activeTab, setActiveTab] = useState('Stakeholders');
   const [isCollapsed, setIsCollapsed] = useState(false);
 
+  
   const menuItems = [
-    { name: 'Dashboard', icon: 'grid' },
-    { name: 'Screening', icon: 'clipboard' },
-    { name: 'Stakeholders', icon: 'users' }, 
-    { name: 'Engagements', icon: 'handshake' },
-    { name: 'Task Manager', icon: 'list' },
-    { name: 'Notifications', icon: 'bell' },
-    { name: 'Chats', icon: 'chat' },
-    { name: 'Portfolio Share', icon: 'link' },
-    { name: 'Settings', icon: 'cog' },
+    { name: 'Dashboard', icon: LuLayoutGrid },
+    { name: 'Screening', icon: LuClipboardList },
+    { name: 'Stakeholders', icon: LuUsers }, 
+    { name: 'Engagements', icon: LuHandshake },
+    { name: 'Task Manager', icon: LuListTodo },
+    { name: 'Notifications', icon: LuBell },
+    { name: 'Chats', icon: LuMessageSquare },
+    { name: 'Portfolio Share', icon: LuLink },
+    { name: 'Settings', icon: LuSettings },
   ];
 
   return (
     <aside 
       className={`
-        /* Mobile: Fixed position, full height, z-50 (highest priority) */
-        fixed inset-y-0 left-0 z-50 bg-white border-r border-gray-200 flex flex-col transition-transform duration-300 ease-in-out
+        fixed inset-y-0 left-0 z-50 bg-white border-r border-gray-200 flex flex-col transition-all duration-300 ease-in-out
         ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}
-        
-        /* Desktop: Relative position, always shown */
         md:relative md:translate-x-0
-        
-        /* Width Logic */
         ${isCollapsed ? 'md:w-20' : 'md:w-64'} w-64
       `}
     >
@@ -45,48 +57,62 @@ const Sidebar = ({ mobileMenuOpen, setMobileMenuOpen }) => {
         </div>
 
         {/* Mobile Close Button */}
-        <button onClick={() => setMobileMenuOpen(false)} className="md:hidden text-gray-500 p-1">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+        <button onClick={() => setMobileMenuOpen(false)} className="md:hidden text-gray-500 p-1 hover:text-indigo-600 transition-colors">
+          <LuX className="w-6 h-6" />
         </button>
 
         {/* Desktop Collapse Button */}
-        <button onClick={() => setIsCollapsed(!isCollapsed)} className="hidden md:block text-gray-400 hover:text-indigo-600 transition-colors">
-           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className={`w-5 h-5 transition-transform duration-300 ${isCollapsed ? 'rotate-180' : ''}`}>
-             <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 4.5l7.5 7.5-7.5 7.5m-6-15l7.5 7.5-7.5 7.5" />
-           </svg>
+        <button 
+          onClick={() => setIsCollapsed(!isCollapsed)} 
+          className="hidden md:block text-gray-400 hover:text-indigo-600 transition-colors"
+        >
+           <LuChevronLeft 
+             className={`w-5 h-5 transition-transform duration-300 ${isCollapsed ? 'rotate-180' : ''}`} 
+           />
         </button>
       </div>
 
-      {/* Navigation */}
-      <nav className="flex-1 px-4 space-y-1 overflow-y-auto">
-        {menuItems.map((item) => (
-          <button
-            key={item.name}
-            onClick={() => {
-              setActiveTab(item.name);
-              setMobileMenuOpen(false); // Close sidebar when item clicked (Mobile)
-            }}
-            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-left ${
-              activeTab === item.name ? 'bg-indigo-900 text-white shadow-md' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-            } ${isCollapsed ? 'md:justify-center' : ''}`}
-          >
-            <Icon name={item.icon} className={`w-5 h-5 flex-shrink-0 ${activeTab === item.name ? 'text-white' : 'text-gray-400'}`} />
-            <span className={`${isCollapsed ? 'md:hidden' : 'block'}`}>{item.name}</span>
-          </button>
-        ))}
+      <nav className="flex-1 px-4 space-y-1 overflow-y-auto overflow-x-hidden scrollbar-hide">
+        {menuItems.map((item) => {
+          const IconComponent = item.icon;
+          const isActive = activeTab === item.name;
+
+          return (
+            <button
+              key={item.name}
+              onClick={() => {
+                setActiveTab(item.name);
+                setMobileMenuOpen(false);
+              }}
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 text-left ${
+                isActive 
+                  ? 'bg-indigo-900 text-white shadow-md' 
+                  : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+              } ${isCollapsed ? 'md:justify-center' : ''}`}
+              title={isCollapsed ? item.name : ''}
+            >
+           
+              <IconComponent 
+                className={`w-5 h-5 flex-shrink-0 ${isActive ? 'text-white' : 'text-gray-400 group-hover:text-gray-500'}`} 
+              />
+              
+              <span className={`whitespace-nowrap transition-opacity duration-200 ${isCollapsed ? 'md:hidden md:opacity-0 md:w-0' : 'block opacity-100'}`}>
+                {item.name}
+              </span>
+            </button>
+          );
+        })}
       </nav>
 
-      {/* Logout */}
+    
       <div className="p-4 border-t border-gray-100">
-         <button className={`flex items-center gap-3 w-full px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 rounded-lg ${isCollapsed ? 'md:justify-center' : ''}`}>
-           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 text-gray-400 flex-shrink-0"><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" /></svg>
-           <span className={`${isCollapsed ? 'md:hidden' : 'block'}`}>Logout</span>
+         <button className={`flex items-center gap-3 w-full px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 rounded-lg transition-colors ${isCollapsed ? 'md:justify-center' : ''}`}>
+           <LuLogOut className="w-5 h-5 text-gray-400 flex-shrink-0" />
+           <span className={`whitespace-nowrap ${isCollapsed ? 'md:hidden' : 'block'}`}>Logout</span>
          </button>
       </div>
     </aside>
   );
 };
-
-const Icon = ({ name, className }) => { /* ... keep your icon code ... */ return <svg className={className} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">{/* icons map... */}</svg>};
 
 export default Sidebar;

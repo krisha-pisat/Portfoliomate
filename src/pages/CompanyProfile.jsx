@@ -1,15 +1,16 @@
-// src/pages/CompanyProfile.jsx
-import React from 'react'; // Removed useState, useEffect imports
+
+import React from 'react';
 import ProfileHeader from '../components/ProfileHeader';
 import TabNavigation from '../components/TabNavigation';
 import AboutSection from '../components/AboutSection';
 import CompanyDetails from '../components/CompanyDetails';
 import SidebarWidget from '../components/SidebarWidget';
+import { useNavigate } from 'react-router-dom';
 
-// 1. Accept 'data' and 'loading' from App.jsx
-const CompanyProfile = ({ onEdit, data, loading }) => {
+
+const CompanyProfile = ({data, loading }) => {
+  const navigate = useNavigate();
   
-  // Mock Data (Unchanged)
   const associatedMembers = [
     { name: "John Smith", role: "CEO", imageUrl: "https://i.pravatar.cc/150?u=john", linkedinUrl: "#" },
     { name: "David Taylor", role: "Director of Operations", imageUrl: "https://i.pravatar.cc/150?u=david", linkedinUrl: "#" },
@@ -23,9 +24,9 @@ const CompanyProfile = ({ onEdit, data, loading }) => {
   return (
     <div className="flex-1">
       
-      {/* 2. Use the 'data' prop directly */}
+    
       <ProfileHeader 
-        onEdit={onEdit} 
+        onEdit={() => navigate('/edit')} 
         logoUrl={data?.details?.logoUrl} 
         companyName={data?.details?.registeredName}
       />

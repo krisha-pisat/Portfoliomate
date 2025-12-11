@@ -1,4 +1,4 @@
-// src/components/TabNavigation.jsx
+
 import React, { useState } from 'react';
 
 const TabNavigation = () => {
